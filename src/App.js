@@ -16,7 +16,10 @@ class App extends Component {
   }
   componentDidMount(){
     this.props.ChatEngine.global.on('message', (payload)=>{
-      console.log(payload);
+      console.log(this);
+      const messages = this.state.messages;
+      messages.push({uuid: payload.sender.uuid, text: payload.data.text});
+      this.setState({messages: messages})
     })
   }
   setChatInput(event) {
@@ -32,12 +35,17 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-
-        <Content style={{ padding: '20px 50px' }}>
+        <h2>ChatEngine Demo</h2>
+        <Content style={{ padding: '0px 100px 10px 100px' }}>
           <div className="message-box">
             {
               this.state.messages.map((v, idx)=>{
-                return (<List key={idx}><Item>{v}</Item></List>)
+                return (
+                  <div className="chat-box" key={idx}>
+                    <div className="chat-name">{v.uuid}:</div>
+                    <div className="chat-text"> {v.text}</div>
+                  </div> 
+                )
               })
             }
           </div>
