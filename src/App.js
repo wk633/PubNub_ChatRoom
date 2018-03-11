@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import {Input, Layout, List, Button, Message} from 'antd';
+import {Input, Layout, Message} from 'antd';
 import './App.css';
 
 const {Content} = Layout
-const {Item} = List;
 
 class App extends Component {
   constructor(){
@@ -14,6 +13,7 @@ class App extends Component {
     }
   }
   componentDidMount(){
+    console.log(this.props.ChatEngine)
     this.props.ChatEngine.global.on('message', (payload)=>{
       const messages = this.state.messages;
       messages.push({uuid: payload.sender.uuid, text: payload.data.text, timeToken: payload.data.timeShort});
@@ -22,7 +22,7 @@ class App extends Component {
     })
     this.props.ChatEngine.global.search({
       event: 'message',
-      limit: 5,
+      limit: 30,
       reverse: true
     }).on('message', (payload) => {
       const messages = this.state.messages;
@@ -30,14 +30,16 @@ class App extends Component {
       this.setState({messages: messages})
     }).on('$.search.finish', () => {
         console.log('we have all our results!');
-        Message.success("Last message loaded")
+        this.refs.messageBox.scrollTo(0, this.refs.messageBox.scrollHeight)
+        const length = this.state.messages.length;
+        Message.success(`Last ${length} messages loaded`);
     });
   }
   setChatInput(event) {
     this.setState({curText: event.target.value})
   }
   handleSubmit(e){
-    if(this.state.curText == "") return;
+    if(this.state.curText === "") return;
     this.props.ChatEngine.global.emit('message', {
       text: this.state.curText,
       timeShort: new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3")
@@ -52,16 +54,21 @@ class App extends Component {
           <div ref="messageBox" className="message-box">
             {
               this.state.messages.map((v, idx)=>{
-                return (
-                  <div className="chat-box" key={idx}>
-                    <div className="chat-name">{v.uuid}:<br/>{v.timeToken}</div>
-                    <div className="chat-text"> {v.text}</div>
-                  </div> 
-                )
+                if(v.uuid !== this.props.ChatEngine.me.uuid){
+                  return (<div className="chat-box" key={idx}>
+                            <div className="chat-name">{v.uuid}    {v.timeToken}</div>
+                            <div className="chat-text"> {v.text}</div>
+                        </div>);
+                }else{
+                  return(<div className="chat-box-me" key={idx}>
+                            <div className="chat-name-me">{v.timeToken}    me</div>
+                            <div className="chat-text-me"> {v.text}</div>
+                          </div>)
+                }
               })
             }
           </div>
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 16, width: "534px" }}>
             <Input
               placeholder="input message text" 
               size="large" 
