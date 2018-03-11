@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import {Input, Layout, List, Button} from 'antd';
+import {Input, Layout, List, Button, Message} from 'antd';
 import './App.css';
 
 const {Content} = Layout
 const {Item} = List;
-
 
 class App extends Component {
   constructor(){
@@ -16,12 +15,23 @@ class App extends Component {
   }
   componentDidMount(){
     this.props.ChatEngine.global.on('message', (payload)=>{
-      console.log(payload);
       const messages = this.state.messages;
       messages.push({uuid: payload.sender.uuid, text: payload.data.text, timeToken: payload.data.timeShort});
       this.setState({messages: messages})
       this.refs.messageBox.scrollTo(0, this.refs.messageBox.scrollHeight);
     })
+    this.props.ChatEngine.global.search({
+      event: 'message',
+      limit: 5,
+      reverse: true
+    }).on('message', (payload) => {
+      const messages = this.state.messages;
+      messages.unshift({uuid: payload.sender.uuid, text: payload.data.text, timeToken: payload.data.timeShort});
+      this.setState({messages: messages})
+    }).on('$.search.finish', () => {
+        console.log('we have all our results!');
+        Message.success("Last message loaded")
+    });
   }
   setChatInput(event) {
     this.setState({curText: event.target.value})
