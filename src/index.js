@@ -6,7 +6,7 @@ import registerServiceWorker from './registerServiceWorker';
 import ChatEngineCore from 'chat-engine';
 
 const now = new Date().getTime();
-const username = ['user', now].join('-');
+const username = localStorage.getItem("username-chatroom") !== null ? localStorage.getItem("username-chatroom") : ['user', now].join('-');
 
 
 const ChatEngine = ChatEngineCore.create({
@@ -22,6 +22,7 @@ ChatEngine.connect(username, {
 
 ChatEngine.on('$.ready', () => {
     ReactDOM.render( <App ChatEngine={ChatEngine}/>, document.getElementById('root'));
+    localStorage.setItem("username-chatroom", username);
 });
 
 registerServiceWorker();
