@@ -20,6 +20,7 @@ class App extends Component {
       const messages = this.state.messages;
       messages.push({uuid: payload.sender.uuid, text: payload.data.text, timeToken: payload.data.timeShort});
       this.setState({messages: messages})
+      this.refs.messageBox.scrollTo(0, this.refs.messageBox.scrollHeight);
     })
   }
   setChatInput(event) {
@@ -38,7 +39,7 @@ class App extends Component {
       <div className="App">
         <h2>ChatEngine Demo</h2>
         <Content style={{ padding: '0px 100px 10px 100px' }}>
-          <div className="message-box">
+          <div ref="messageBox" className="message-box">
             {
               this.state.messages.map((v, idx)=>{
                 return (
