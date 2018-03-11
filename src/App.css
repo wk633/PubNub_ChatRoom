@@ -1,16 +1,12 @@
 .App {
   text-align: center;
 }
-
-.App-header {
-  background-color: #222;
-  height: 60px;
-  padding: 20px;
-  color: white;
+.container {
+  padding-top: 20px;
 }
-
-.App-title {
-  font-size: 1.5em;
+.message-box {
+  background: #fff;
+  padding: 24px;
+  min-height: 500px;
+  max-height:500px;
 }
-
-
