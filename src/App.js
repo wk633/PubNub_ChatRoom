@@ -13,7 +13,7 @@ class App extends Component {
     }
   }
   componentDidMount(){
-    console.log(this.props.ChatEngine)
+    // console.log(this.props.ChatEngine)
     this.props.ChatEngine.global.on('message', (payload)=>{
       const messages = this.state.messages;
       messages.push({uuid: payload.sender.uuid, text: payload.data.text, timeToken: payload.data.timeShort});
@@ -51,32 +51,35 @@ class App extends Component {
       <div className="App">
         <h2>ChatEngine Demo</h2>
         <Content style={{ padding: '0px 100px 10px 100px' }}>
-          <div ref="messageBox" className="message-box">
-            {
-              this.state.messages.map((v, idx)=>{
-                if(v.uuid !== this.props.ChatEngine.me.uuid){
-                  return (<div className="chat-box" key={idx}>
-                            <div className="chat-name">{v.uuid}    {v.timeToken}</div>
-                            <div className="chat-text"> {v.text}</div>
-                        </div>);
-                }else{
-                  return(<div className="chat-box-me" key={idx}>
-                            <div className="chat-name-me">{v.timeToken}    me</div>
-                            <div className="chat-text-me"> {v.text}</div>
-                          </div>)
-                }
-              })
-            }
+          <div>
+            <div ref="messageBox" className="message-box">
+              {
+                this.state.messages.map((v, idx)=>{
+                  if(v.uuid !== this.props.ChatEngine.me.uuid){
+                    return (<div className="chat-box" key={idx}>
+                              <div className="chat-name">{v.uuid}    {v.timeToken}</div>
+                              <div className="chat-text"> {v.text}</div>
+                          </div>);
+                  }else{
+                    return(<div className="chat-box-me" key={idx}>
+                              <div className="chat-name-me">{v.timeToken}    me</div>
+                              <div className="chat-text-me"> {v.text}</div>
+                            </div>)
+                  }
+                })
+              }
+            </div>
+            <div style={{ marginBottom: 16, width: "534px" }}>
+              <Input
+                placeholder="input message text" 
+                size="large" 
+                value={this.state.curText}
+                onChange={this.setChatInput.bind(this)} 
+                onPressEnter={this.handleSubmit.bind(this)}
+                addonAfter={<span style={{cursor: "pointer"}} onClick={this.handleSubmit.bind(this)}>Submit</span>}/>
+            </div>
           </div>
-          <div style={{ marginBottom: 16, width: "534px" }}>
-            <Input
-              placeholder="input message text" 
-              size="large" 
-              value={this.state.curText}
-              onChange={this.setChatInput.bind(this)} 
-              onPressEnter={this.handleSubmit.bind(this)}
-              addonAfter={<span onClick={this.handleSubmit.bind(this)}>Submit</span>}/>
-          </div>
+          
         </Content>
       </div>
     );

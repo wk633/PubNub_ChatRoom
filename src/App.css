@@ -6,6 +6,10 @@
   padding-top: 20px;
   width: 734px;
 }
+.ant-layout-content{
+  display: flex;
+  justify-content: center;
+}
 .message-box {
   background:#F2F5F8;
   padding: 24px;
