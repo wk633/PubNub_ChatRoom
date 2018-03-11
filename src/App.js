@@ -16,9 +16,9 @@ class App extends Component {
   }
   componentDidMount(){
     this.props.ChatEngine.global.on('message', (payload)=>{
-      console.log(this);
+      console.log(payload);
       const messages = this.state.messages;
-      messages.push({uuid: payload.sender.uuid, text: payload.data.text});
+      messages.push({uuid: payload.sender.uuid, text: payload.data.text, timeToken: payload.data.timeShort});
       this.setState({messages: messages})
     })
   }
@@ -28,7 +28,8 @@ class App extends Component {
   handleSubmit(e){
     if(this.state.curText == "") return;
     this.props.ChatEngine.global.emit('message', {
-      text: this.state.curText
+      text: this.state.curText,
+      timeShort: new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3")
     })
     this.setState({curText: ""})
   }
@@ -42,7 +43,7 @@ class App extends Component {
               this.state.messages.map((v, idx)=>{
                 return (
                   <div className="chat-box" key={idx}>
-                    <div className="chat-name">{v.uuid}:</div>
+                    <div className="chat-name">{v.uuid}:<br/>{v.timeToken}</div>
                     <div className="chat-text"> {v.text}</div>
                   </div> 
                 )
