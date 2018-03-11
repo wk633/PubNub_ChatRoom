@@ -1,22 +1,10 @@
 import React, { Component } from 'react';
-import ChatEngineCore from 'chat-engine';
 import {Input, Layout, List, Button} from 'antd';
 import './App.css';
 
 const {Content} = Layout
 const {Item} = List;
-const now = new Date().getTime();
-const username = ['user', now].join('-');
 
-const ChatEngine = ChatEngineCore.create({
-  publishKey: 'pub-c-a03c7d89-5772-4a1c-96d3-62d398514969',
-  subscribeKey: 'sub-c-ebc7762a-23f3-11e8-a8f3-22fca5d72012'
-}, {
-  globalChannel: 'react-chatroom'
-});
-ChatEngine.connect(username, {
-    signedOnTime: now
-})
 
 class App extends Component {
   constructor(){
@@ -27,20 +15,19 @@ class App extends Component {
     }
   }
   componentDidMount(){
-
+    this.props.ChatEngine.global.on('message', (payload)=>{
+      console.log(payload);
+    })
   }
   setChatInput(event) {
     this.setState({curText: event.target.value})
   }
   handleSubmit(e){
     if(this.state.curText == "") return;
-    let messages = this.state.messages;
-    messages.push(this.state.curText);
-    this.setState({
-      messages: messages,
-      curText: ""
-    });
-    e.target.value = "";
+    this.props.ChatEngine.global.emit('message', {
+      text: this.state.curText
+    })
+    this.setState({curText: ""})
   }
   render() {
     return (
